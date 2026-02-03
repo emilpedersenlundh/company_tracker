@@ -38,5 +38,21 @@ services:
     command: >
       sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
 
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: company_tracker_frontend
+    environment:
+      API_URL: http://api:8000
+    ports:
+      - "8501:8501"
+    depends_on:
+      - api
+    volumes:
+      - ./frontend:/app/frontend:ro
+    command: >
+      streamlit run frontend/Home.py --server.address 0.0.0.0 --server.port 8501
+
 volumes:
   postgres_data:

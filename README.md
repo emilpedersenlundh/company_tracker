@@ -1,4 +1,4 @@
-# Company Tracker Database API
+# Company Tracker
 
 A FastAPI application implementing an **append-only temporal database pattern** for tracking companies, metrics, products, and market shares with full history.
 
@@ -50,6 +50,37 @@ python scripts/seed_data.py
 # Start the API
 uvicorn app.main:app --reload
 ```
+
+## Streamlit Frontend
+
+The project includes a Streamlit-based web UI for managing data.
+
+### Running with Docker Compose
+
+```bash
+# Start everything (database, API, and frontend)
+docker-compose up -d
+
+# Frontend available at http://localhost:8501
+# API available at http://localhost:8000
+```
+
+### Running Locally
+
+```bash
+# Make sure the API is running first
+# Then start Streamlit
+streamlit run frontend/Home.py
+```
+
+### Frontend Pages
+
+- **Home**: Dashboard with summary statistics
+- **Companies**: Browse, create/edit companies, view history
+- **Metrics**: Manage financial metrics with analytics
+- **Products**: Product hierarchy management with tree view
+- **Shares**: Market share tracking with visualizations
+- **Reports**: Aggregated reports and data export
 
 ## API Endpoints
 
@@ -224,7 +255,7 @@ pytest tests/test_companies.py -v
 ## Project Structure
 
 ```
-company-tracker-db/
+.
 ├── app/
 │   ├── __init__.py
 │   ├── main.py              # FastAPI app initialization
@@ -234,10 +265,18 @@ company-tracker-db/
 │   ├── schemas/             # Pydantic validation schemas
 │   ├── repositories/        # Data access with upsert logic
 │   └── routers/             # API endpoints
+├── frontend/
+│   ├── __init__.py
+│   ├── app.py               # Main Streamlit entry point
+│   ├── api_client.py        # HTTP client for API
+│   ├── components/          # Reusable UI components
+│   └── pages/               # Streamlit pages
 ├── alembic/                 # Database migrations
 ├── tests/                   # Pytest test suite
 ├── scripts/                 # Utility scripts
 ├── docker-compose.yml
+├── Dockerfile
+├── Dockerfile.frontend
 ├── requirements.txt
 └── README.md
 ```
