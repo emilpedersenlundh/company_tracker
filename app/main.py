@@ -22,6 +22,15 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan handler for startup/shutdown."""
     settings = get_settings()
     configure_logging(settings)
+
+    # Auto-create tables for SQLite (Alembic doesn't support SQLite well)
+    if settings.is_sqlite:
+        from app.database import Base, engine
+        import app.models  # noqa: F401
+
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+
     yield
 
 

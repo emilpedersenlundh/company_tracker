@@ -97,7 +97,7 @@ class CompanyRepository(BaseRepository[CompanyHistory]):
         )
 
         if name_contains:
-            stmt = stmt.where(CompanyHistory.company_name.ilike(f"%{name_contains}%"))
+            stmt = stmt.where(CompanyHistory.company_name.like(f"%{name_contains}%"))
 
         stmt = stmt.order_by(CompanyHistory.company_name).limit(limit).offset(offset)
         result = await self.session.execute(stmt)

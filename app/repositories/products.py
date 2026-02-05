@@ -104,7 +104,7 @@ class ProductRepository(BaseRepository[ProductHierarchyHistory]):
             stmt = stmt.where(ProductHierarchyHistory.class_level_2 == class_level_2)
         if name_contains:
             stmt = stmt.where(
-                ProductHierarchyHistory.class_level_3.ilike(f"%{name_contains}%")
+                ProductHierarchyHistory.class_level_3.like(f"%{name_contains}%")
             )
 
         stmt = (

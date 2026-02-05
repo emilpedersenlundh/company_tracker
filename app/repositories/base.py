@@ -150,8 +150,10 @@ class BaseRepository(ABC, Generic[ModelType]):
             )
             await self.session.execute(stmt)
 
-        # Insert new record
+        # Insert new record with explicit valid_from for consistent timestamps
+        # (SQLite's CURRENT_TIMESTAMP has only second-level precision)
         new_record = self._create_new_record(business_keys, data, created_by)
+        new_record.valid_from = datetime.utcnow()
         self.session.add(new_record)
         await self.session.flush()  # Get the record_id
 

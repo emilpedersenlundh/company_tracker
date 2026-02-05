@@ -26,8 +26,8 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/company_tracker
       DATABASE_URL_SYNC: postgresql://postgres:postgres@db:5432/company_tracker
-      APP_ENV: development
-      DEBUG: "true"
+      APP_ENV: production
+      DEBUG: "false"
     ports:
       - "8000:8000"
     depends_on:
