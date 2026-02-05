@@ -20,18 +20,7 @@ $env:APP_ENV = "development"
 # Initialize SQLite database if it doesn't exist
 if (-not (Test-Path ".\company_tracker.db")) {
     Write-Host "Initializing SQLite database..." -ForegroundColor Yellow
-    python -c "
-import asyncio
-from app.database import Base, engine
-import app.models
-
-async def init():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-asyncio.run(init())
-"
-    Write-Host "Database created." -ForegroundColor Green
+    python scripts/init_db.py
 }
 
 # Use absolute path so background jobs resolve correctly

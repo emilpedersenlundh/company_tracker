@@ -8,10 +8,11 @@ from pathlib import Path
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from sqlalchemy import text
+from sqlalchemy import inspect, text
 
 from app.config import get_settings
 from app.database import Base, engine
+import app.models  # noqa: F401 — register all models with Base.metadata
 
 
 async def init_database() -> None:
@@ -22,17 +23,12 @@ async def init_database() -> None:
     async with engine.begin() as conn:
         # Create all tables
         await conn.run_sync(Base.metadata.create_all)
-        print("Tables created successfully.")
 
         # Verify tables exist
-        result = await conn.execute(
-            text(
-                "SELECT table_name FROM information_schema.tables "
-                "WHERE table_schema = 'public'"
-            )
+        tables = await conn.run_sync(
+            lambda sync_conn: inspect(sync_conn).get_table_names()
         )
-        tables = [row[0] for row in result.fetchall()]
-        print(f"Created tables: {tables}")
+        print(f"Tables ready: {tables}")
 
 
 if __name__ == "__main__":
