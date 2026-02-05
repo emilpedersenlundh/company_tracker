@@ -7,8 +7,8 @@ from typing import Literal
 from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-SQLITE_URL = "sqlite+aiosqlite:///./company_tracker.db"
-SQLITE_URL_SYNC = "sqlite:///./company_tracker.db"
+SQLITE_URL = "sqlite+aiosqlite:///company_tracker.db"
+SQLITE_URL_SYNC = "sqlite:///company_tracker.db"
 POSTGRES_URL = "postgresql+asyncpg://postgres:postgres@localhost:5432/company_tracker"
 POSTGRES_URL_SYNC = "postgresql://postgres:postgres@localhost:5432/company_tracker"
 
