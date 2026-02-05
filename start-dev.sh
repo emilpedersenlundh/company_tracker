@@ -16,6 +16,23 @@ fi
 
 export APP_ENV=development
 
+# Initialize SQLite database if it doesn't exist
+if [ ! -f "company_tracker.db" ]; then
+    echo "Initializing SQLite database..."
+    python3 -c "
+import asyncio
+from app.database import Base, engine
+import app.models
+
+async def init():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+asyncio.run(init())
+"
+    echo "Database created."
+fi
+
 echo ""
 echo "Starting Company Tracker (development mode)"
 echo "  API:      http://localhost:8000"

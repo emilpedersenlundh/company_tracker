@@ -14,6 +14,30 @@ if (-not (Test-Path $venvActivate)) {
     & $venvActivate
 }
 
+# Set environment
+$env:APP_ENV = "development"
+
+# Initialize SQLite database if it doesn't exist
+if (-not (Test-Path ".\company_tracker.db")) {
+    Write-Host "Initializing SQLite database..." -ForegroundColor Yellow
+    python -c "
+import asyncio
+from app.database import Base, engine
+import app.models
+
+async def init():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+asyncio.run(init())
+"
+    Write-Host "Database created." -ForegroundColor Green
+}
+
+# Use absolute path so background jobs resolve correctly
+$projectDir = (Get-Location).Path
+
+Write-Host ""
 Write-Host "Starting Company Tracker (development mode)" -ForegroundColor Cyan
 Write-Host "  API:      http://localhost:8000" -ForegroundColor Green
 Write-Host "  API Docs: http://localhost:8000/docs" -ForegroundColor Green
@@ -23,19 +47,17 @@ Write-Host ""
 Write-Host "Press Ctrl+C to stop all services" -ForegroundColor Yellow
 Write-Host ""
 
-# Set environment
-$env:APP_ENV = "development"
-
 # Start FastAPI and Streamlit as background jobs
 $api = Start-Job -ScriptBlock {
-    Set-Location $using:PWD
-    & ".\venv\Scripts\Activate.ps1"
+    Set-Location $using:projectDir
+    & "$using:projectDir\venv\Scripts\Activate.ps1"
+    $env:APP_ENV = "development"
     uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 }
 
 $frontend = Start-Job -ScriptBlock {
-    Set-Location $using:PWD
-    & ".\venv\Scripts\Activate.ps1"
+    Set-Location $using:projectDir
+    & "$using:projectDir\venv\Scripts\Activate.ps1"
     streamlit run frontend/Home.py --server.address 127.0.0.1 --server.port 8501
 }
 
